@@ -4,6 +4,7 @@ import SwiftUI
 struct LoginListView: View {
     @StateObject private var vm = LoginListViewModel()
     @State private var showAdd = false
+    @State private var showSettings = false
     
     var body: some View {
         NavigationView {
@@ -17,9 +18,19 @@ struct LoginListView: View {
             }
             .navigationTitle("Logins")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showAdd = true }) { Image(systemName: "plus") }
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView(vm: vm)
             }
             .sheet(isPresented: $showAdd) {
                 LoginEditView(parentVM: vm)

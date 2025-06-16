@@ -2,7 +2,8 @@ import SwiftUI
 
 struct IndexedLoginListView: View {
     @StateObject private var vm = LoginListViewModel()
-
+    @State private var showSettings = false
+    
     // 拆分后更易通过编译
     private var grouped: [(key: String, value: [SecureLogin])] {
         let dict = Dictionary(grouping: vm.logins, by: { login in
@@ -58,6 +59,13 @@ struct IndexedLoginListView: View {
                 .overlay(indexBar, alignment: .trailing)
                 .navigationTitle("Logins")
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                         Button {
+                             showSettings = true
+                         } label: {
+                             Image(systemName: "gearshape")
+                         }
+                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         NavigationLink {
                             LoginEditView(parentVM: vm)
@@ -65,6 +73,9 @@ struct IndexedLoginListView: View {
                             Image(systemName: "plus")
                         }
                     }
+                }
+                .sheet(isPresented: $showSettings) {
+                    SettingsView(vm: vm)
                 }
             }
         }

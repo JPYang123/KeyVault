@@ -55,4 +55,31 @@ final class LoginListViewModel: ObservableObject {
             delete(at: IndexSet(integer: index))
         }
     }
+
+    // MARK: - Import & Export
+
+    /// Create JSON data containing all login information and passwords
+    func exportData() -> Data? {
+        let exported: [ExportedLogin] = logins.compactMap { login in
+            guard let pwd = try? KeychainService.shared.readPassword(for: login.keychainKey) else { return nil }
+            return ExportedLogin(title: login.title,
+                                 userName: login.userName,
+                                 password: pwd,
+                                 note: login.note)
+        }
+        return try? JSONEncoder().encode(exported)
+    }
+
+    /// Import logins from provided JSON data
+    func importData(_ data: Data) {
+        guard let imported = try? JSONDecoder().decode([ExportedLogin].self, from: data) else { return }
+        imported.forEach { item in
+            guard !logins.contains(where: { $0.title == item.title && $0.userName == item.userName }) else { return }
+            let login = SecureLogin(title: item.title,
+                                   userName: item.userName,
+                                   keychainKey: UUID().uuidString,
+                                   note: item.note)
+            add(login: login, password: item.password)
+        }
+    }
 }
