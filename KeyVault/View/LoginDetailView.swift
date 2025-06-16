@@ -17,7 +17,13 @@ struct LoginDetailView: View {
                 HStack {
                     Text(vm.password)
                     Spacer()
-                    Button("显示") { vm.reveal() }
+                    Button(vm.password == "••••••" ? "显示" : "隐藏") {
+                        if vm.password == "••••••" {
+                            vm.reveal()
+                        } else {
+                            vm.password = "••••••"
+                        }
+                    }
                 }
             }
             if let note = vm.login.note {
@@ -25,10 +31,21 @@ struct LoginDetailView: View {
             }
         }
         .navigationTitle(vm.login.title)
+        .onAppear {
+            if let updated = parentVM.logins.first(where: { $0.id == vm.login.id }) {
+                vm.login = updated
+            }
+        }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink("编辑") {
                     LoginEditView(parentVM: parentVM, editing: vm.login)
+                }
+                Button(role: .destructive) {
+                    parentVM.delete(login: vm.login)
+                    presentation.wrappedValue.dismiss()
+                } label: {
+                    Image(systemName: "trash")
                 }
             }
         }

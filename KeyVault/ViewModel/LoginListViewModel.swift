@@ -48,4 +48,11 @@ final class LoginListViewModel: ObservableObject {
         logins.remove(atOffsets: offsets)
         save()
     }
+    
+    /// 删除指定条目
+    func delete(login: SecureLogin) {
+        if let index = logins.firstIndex(where: { $0.id == login.id }) {
+            delete(at: IndexSet(integer: index))
+        }
+    }
 }

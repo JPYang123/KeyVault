@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct LoginEditView: View {
     @Environment(\.presentationMode) var presentation
@@ -16,6 +17,10 @@ struct LoginEditView: View {
         _title = State(initialValue: editing?.title ?? "")
         _user  = State(initialValue: editing?.userName ?? "")
         _note  = State(initialValue: editing?.note ?? "")
+        if let editing { // 预填充密码
+            let pwdValue = (try? KeychainService.shared.readPassword(for: editing.keychainKey)) ?? ""
+            _pwd = State(initialValue: pwdValue)
+        }
     }
     
     var body: some View {
@@ -23,8 +28,10 @@ struct LoginEditView: View {
             Form {
                 TextField("标题", text: $title)
                 TextField("用户名", text: $user)
-                SecureField("密码", text: $pwd)
-                TextField("备注", text: $note)
+                TextField("密码", text: $pwd)
+                    .textContentType(.password)
+                TextEditor(text: $note)
+                    .frame(minHeight: 80)
             }
             .navigationTitle(editing == nil ? "新建条目" : "编辑条目")
             .toolbar {
