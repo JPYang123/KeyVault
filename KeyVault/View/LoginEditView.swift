@@ -7,6 +7,7 @@ struct LoginEditView: View {
     @State private var user: String = ""
     @State private var pwd: String = ""
     @State private var note: String = ""
+    @State private var iconName: String = LoginIcon.web.rawValue
     
     var parentVM: LoginListViewModel
     var editing: SecureLogin?
@@ -17,6 +18,7 @@ struct LoginEditView: View {
         _title = State(initialValue: editing?.title ?? "")
         _user  = State(initialValue: editing?.userName ?? "")
         _note  = State(initialValue: editing?.note ?? "")
+        _iconName = State(initialValue: editing?.iconName ?? LoginIcon.web.rawValue)
         if let editing { // 预填充密码
             let pwdValue = (try? KeychainService.shared.readPassword(for: editing.keychainKey)) ?? ""
             _pwd = State(initialValue: pwdValue)
@@ -30,6 +32,11 @@ struct LoginEditView: View {
                 TextField("用户名", text: $user)
                 TextField("密码", text: $pwd)
                     .textContentType(.password)
+                Picker("图标", selection: $iconName) {
+                    ForEach(LoginIcon.allCases) { icon in
+                        Image(systemName: icon.rawValue).tag(icon.rawValue)
+                    }
+                }
                 TextEditor(text: $note)
                     .frame(minHeight: 80)
             }
@@ -45,7 +52,8 @@ struct LoginEditView: View {
                                                 title: title,
                                                 userName: user,
                                                 keychainKey: key,
-                                                note: note.isEmpty ? nil : note)
+                                                note: note.isEmpty ? nil : note,
+                                                iconName: iconName)
                         if let _ = editing {
                             parentVM.update(login: login, password: pwd.isEmpty ? nil : pwd)
                         } else {
@@ -53,7 +61,7 @@ struct LoginEditView: View {
                         }
                         presentation.wrappedValue.dismiss()
                     }
-                    .disabled(title.isEmpty || user.isEmpty)
+                    .disabled(title.isEmpty)
                 }
             }
         }

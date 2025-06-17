@@ -11,7 +11,7 @@ struct LoginListView: View {
             List {
                 ForEach(vm.logins) { item in
                     NavigationLink(destination: LoginDetailView(login: item, parentVM: vm)) {
-                        Label(item.title, systemImage: "globe")
+                        Label(item.title, systemImage: item.iconName)
                     }
                 }
                 .onDelete(perform: vm.delete)

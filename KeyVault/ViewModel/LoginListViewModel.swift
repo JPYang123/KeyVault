@@ -65,7 +65,8 @@ final class LoginListViewModel: ObservableObject {
             return ExportedLogin(title: login.title,
                                  userName: login.userName,
                                  password: pwd,
-                                 note: login.note)
+                                 note: login.note,
+                                 iconName: login.iconName)
         }
         return try? JSONEncoder().encode(exported)
     }
@@ -78,7 +79,8 @@ final class LoginListViewModel: ObservableObject {
             let login = SecureLogin(title: item.title,
                                    userName: item.userName,
                                    keychainKey: UUID().uuidString,
-                                   note: item.note)
+                                    note: item.note,
+                                    iconName: item.iconName ?? LoginIcon.web.rawValue)
             add(login: login, password: item.password)
         }
     }

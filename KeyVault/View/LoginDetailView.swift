@@ -30,13 +30,16 @@ struct LoginDetailView: View {
                 Section(header: Text("备注")) { Text(note) }
             }
         }
-        .navigationTitle(vm.login.title)
+        .navigationTitle(Text(vm.login.title))
         .onAppear {
             if let updated = parentVM.logins.first(where: { $0.id == vm.login.id }) {
                 vm.login = updated
             }
         }
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Label(vm.login.title, systemImage: vm.login.iconName)
+            }
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink("编辑") {
                     LoginEditView(parentVM: parentVM, editing: vm.login)

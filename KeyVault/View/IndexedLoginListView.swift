@@ -49,7 +49,7 @@ struct IndexedLoginListView: View {
                                 NavigationLink(
                                     destination: LoginDetailView(login: login, parentVM: vm)
                                 ) {
-                                    Label(login.title, systemImage: "globe")
+                                    Label(login.title, systemImage: login.iconName)
                                 }
                             }
                         }
