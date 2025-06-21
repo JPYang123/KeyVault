@@ -3,6 +3,34 @@ import Combine
 
 final class LoginListViewModel: ObservableObject {
     @Published var logins: [SecureLogin] = []
+    /// Text used for filtering logins
+     @Published var searchText: String = ""
+
+     /// Logins filtered using ``searchText``
+     var filteredLogins: [SecureLogin] {
+         guard !searchText.isEmpty else { return logins }
+         return logins.filter { login in
+             // check title and user name first
+             if login.title.localizedCaseInsensitiveContains(searchText) ||
+                 login.userName.localizedCaseInsensitiveContains(searchText) {
+                 return true
+             }
+
+             // match note text
+             if let note = login.note,
+                 note.localizedCaseInsensitiveContains(searchText) {
+                 return true
+             }
+
+             // check password stored in Keychain
+//             if let pwd = try? KeychainService.shared.readPassword(for: login.keychainKey),
+//                pwd.localizedCaseInsensitiveContains(searchText) {
+//                 return true
+//             }
+
+             return false
+         }
+     }
     
     // DEMO：持久化方案可改为 CoreData / FileManager + CryptoKit 等
     private let storageURL: URL = {

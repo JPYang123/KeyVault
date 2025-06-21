@@ -9,7 +9,7 @@ struct LoginListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.logins) { item in
+                ForEach(vm.filteredLogins) { item in
                     NavigationLink(destination: LoginDetailView(login: item, parentVM: vm)) {
                         Label(item.title, systemImage: item.iconName)
                     }
@@ -17,6 +17,7 @@ struct LoginListView: View {
                 .onDelete(perform: vm.delete)
             }
             .navigationTitle("Logins")
+            .searchable(text: $vm.searchText)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {

@@ -6,7 +6,7 @@ struct IndexedLoginListView: View {
     
     // 拆分后更易通过编译
     private var grouped: [(key: String, value: [SecureLogin])] {
-        let dict = Dictionary(grouping: vm.logins, by: { login in
+        let dict = Dictionary(grouping: vm.filteredLogins, by: { login in
             login.title.first?.uppercased() ?? "#"
         })
         let mapped = dict.mapValues { group in
@@ -58,6 +58,7 @@ struct IndexedLoginListView: View {
                 // 3️⃣ 在 List 上叠加 indexBar
                 .overlay(indexBar, alignment: .trailing)
                 .navigationTitle("Logins")
+                .searchable(text: $vm.searchText)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                          Button {
