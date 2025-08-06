@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var vm: LoginListViewModel
+    @EnvironmentObject var auth: AuthViewModel
 
     @State private var showExporter = false
     @State private var showImporter = false
@@ -11,11 +12,19 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Button("Import") { showImporter = true }
-                Button("Export") {
-                    if let data = vm.exportData() {
-                        document = LoginDocument(data: data)
-                        showExporter = true
+                Section {
+                    Button("Import") { showImporter = true }
+                    Button("Export") {
+                        if let data = vm.exportData() {
+                            document = LoginDocument(data: data)
+                            showExporter = true
+                        }
+                    }
+                }
+                Section {
+                    NavigationLink("Password") {
+                        PasswordSettingsView()
+                            .environmentObject(auth)
                     }
                 }
             }

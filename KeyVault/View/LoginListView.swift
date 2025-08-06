@@ -5,6 +5,7 @@ struct LoginListView: View {
     @StateObject private var vm = LoginListViewModel()
     @State private var showAdd = false
     @State private var showSettings = false
+    @EnvironmentObject var auth: AuthViewModel
     
     var body: some View {
         NavigationView {
@@ -32,6 +33,7 @@ struct LoginListView: View {
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView(vm: vm)
+                    .environmentObject(auth)
             }
             .sheet(isPresented: $showAdd) {
                 LoginEditView(parentVM: vm)

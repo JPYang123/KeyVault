@@ -3,6 +3,7 @@ import SwiftUI
 struct IndexedLoginListView: View {
     @StateObject private var vm = LoginListViewModel()
     @State private var showSettings = false
+    @EnvironmentObject var auth: AuthViewModel
     
     // 拆分后更易通过编译
     private var grouped: [(key: String, value: [SecureLogin])] {
@@ -77,6 +78,7 @@ struct IndexedLoginListView: View {
                 }
                 .sheet(isPresented: $showSettings) {
                     SettingsView(vm: vm)
+                        .environmentObject(auth)
                 }
             }
         }

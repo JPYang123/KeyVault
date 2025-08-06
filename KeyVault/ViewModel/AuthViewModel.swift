@@ -1,3 +1,4 @@
+import Foundation
 import LocalAuthentication
 import SwiftUI
 import Combine
@@ -5,6 +6,13 @@ import Combine
 final class AuthViewModel: ObservableObject {
     @Published var isUnlocked = false
     @Published var authError: Error?
+    @Published var hasPassword = false
+
+    private let passwordKey = "masterPassword"
+
+    init() {
+        hasPassword = (try? KeychainService.shared.readPassword(for: passwordKey)) != nil
+    }
     
     func unlock() {
         let context = LAContext()
@@ -28,5 +36,31 @@ final class AuthViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func login(with password: String) {
+            if verify(password: password) {
+                isUnlocked = true
+                authError = nil
+            } else {
+                isUnlocked = false
+                authError = NSError(domain: "Auth", code: 1, userInfo: [NSLocalizedDescriptionKey: "Incorrect Password"])
+            }
+        }
+
+    func setPassword(_ password: String) {
+        try? KeychainService.shared.save(password: password, for: passwordKey)
+        hasPassword = true
+    }
+    
+    func changePassword(old: String, new: String) -> Bool {
+        guard verify(password: old) else { return false }
+        try? KeychainService.shared.save(password: new, for: passwordKey)
+        return true
+    }
+    
+    func verify(password: String) -> Bool {
+        guard let stored = try? KeychainService.shared.readPassword(for: passwordKey) else { return false }
+        return stored == password
     }
 }
