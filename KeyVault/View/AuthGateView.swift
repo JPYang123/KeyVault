@@ -10,42 +10,46 @@ struct AuthGateView: View {
                 IndexedLoginListView()
                     .environmentObject(auth)
             } else {
-                VStack(spacing: 24) {
-                    Spacer()
+                ZStack(alignment: .top) {
                     Circle()
-                         .fill(Color.accentColor.opacity(0.2))
-                         .frame(width: 120, height: 120)
-                         .overlay(
-                             Image(systemName: "lock.fill")
-                                 .font(.system(size: 60))
-                                 .foregroundColor(.accentColor)
-                         )
-                     Text("KeyVault")
-                         .font(.largeTitle.bold())
-                     Button {
-                         auth.unlock()
-                     } label: {
-                         Label("使用 Face ID 解锁", systemImage: "faceid")
-                     }
-                     .buttonStyle(.borderedProminent)
-                    if auth.hasPassword {
-                        VStack(spacing: 12) {
-                            SecureField("Password", text: $password)
-                                .textContentType(.password)
-                                .textFieldStyle(.roundedBorder)
-                            Button("Login") { auth.login(with: password) }
-                                .buttonStyle(.borderedProminent)
-                                .disabled(password.isEmpty)
+                        .fill(Color.accentColor.opacity(0.2))
+                        .frame(width: 120, height: 120)
+                        .overlay(
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(.accentColor)
+                        )
+                        .padding(.top, 60)
+
+                    VStack(spacing: 32) {
+                        Text("KeyVault")
+                            .font(.largeTitle.bold())
+                        Button {
+                            auth.unlock()
+                        } label: {
+                            Label("使用 Face ID 解锁", systemImage: "faceid")
                         }
-                        .padding(.horizontal)
+                        .buttonStyle(.borderedProminent)
+                        if auth.hasPassword {
+                            VStack(spacing: 12) {
+                                SecureField("Password", text: $password)
+                                    .textContentType(.password)
+                                    .textFieldStyle(.roundedBorder)
+                                Button("Login") { auth.login(with: password) }
+                                    .buttonStyle(.borderedProminent)
+                                    .disabled(password.isEmpty)
+                            }
+                            .padding(.horizontal)
+                        }
+                        if let err = auth.authError {
+                            Text(err.localizedDescription)
+                                .foregroundColor(.red)
+                        }
+                        Spacer()
                     }
-                    if let err = auth.authError {
-                        Text(err.localizedDescription)
-                            .foregroundColor(.red)
-                    }
-                    Spacer()
+                    .padding(.top, 216)
+                    .padding(.horizontal)
                 }
-                .padding()
             }
         }
         .animation(.easeInOut, value: auth.isUnlocked)
