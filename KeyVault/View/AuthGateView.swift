@@ -10,18 +10,29 @@ struct AuthGateView: View {
                 IndexedLoginListView()
                     .environmentObject(auth)
             } else {
-                VStack(spacing: 32) {
+                VStack(spacing: 24) {
                     Spacer()
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 80))
-                        .padding(.bottom, 8)
-                    Button("使用 Face ID 解锁") { auth.unlock() }
-                        .buttonStyle(.borderedProminent)
+                    Circle()
+                         .fill(Color.accentColor.opacity(0.2))
+                         .frame(width: 120, height: 120)
+                         .overlay(
+                             Image(systemName: "lock.fill")
+                                 .font(.system(size: 60))
+                                 .foregroundColor(.accentColor)
+                         )
+                     Text("KeyVault")
+                         .font(.largeTitle.bold())
+                     Button {
+                         auth.unlock()
+                     } label: {
+                         Label("使用 Face ID 解锁", systemImage: "faceid")
+                     }
+                     .buttonStyle(.borderedProminent)
                     if auth.hasPassword {
                         VStack(spacing: 12) {
                             SecureField("Password", text: $password)
                                 .textContentType(.password)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .textFieldStyle(.roundedBorder)
                             Button("Login") { auth.login(with: password) }
                                 .buttonStyle(.borderedProminent)
                                 .disabled(password.isEmpty)
@@ -40,3 +51,20 @@ struct AuthGateView: View {
         .animation(.easeInOut, value: auth.isUnlocked)
     }
 }
+
+#if DEBUG
+struct AuthGateView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            AuthGateView()
+                .previewDisplayName("Locked (Light)")
+                .previewDevice("iPhone 15 Pro")
+
+            AuthGateView()
+                .previewDisplayName("Locked (Dark, XL Text)")
+                .preferredColorScheme(.dark)
+                .environment(\.sizeCategory, .accessibilityExtraExtraLarge)
+        }
+    }
+}
+#endif

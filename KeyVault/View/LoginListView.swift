@@ -12,12 +12,23 @@ struct LoginListView: View {
             List {
                 ForEach(vm.filteredLogins) { item in
                     NavigationLink(destination: LoginDetailView(login: item, parentVM: vm)) {
-                        Label(item.title, systemImage: item.iconName)
+                        HStack(spacing: 12) {
+                            Image(systemName: item.iconName)
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(Color.accentColor)
+                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            Text(item.title)
+                                .font(.headline)
+                        }
+                        .padding(.vertical, 4)
                     }
                 }
                 .onDelete(perform: vm.delete)
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("Logins")
+            .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $vm.searchText)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

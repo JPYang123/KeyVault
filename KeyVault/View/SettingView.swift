@@ -13,22 +13,31 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 Section {
-                    Button("Import") { showImporter = true }
-                    Button("Export") {
+                    Button {
+                        showImporter = true
+                    } label: {
+                        Label("Import", systemImage: "square.and.arrow.down")
+                    }
+                    Button {
                         if let data = vm.exportData() {
                             document = LoginDocument(data: data)
                             showExporter = true
                         }
+                    } label: {
+                        Label("Export", systemImage: "square.and.arrow.up")
                     }
                 }
                 Section {
-                    NavigationLink("Password") {
+                    NavigationLink {
                         PasswordSettingsView()
                             .environmentObject(auth)
+                    } label: {
+                        Label("Password", systemImage: "lock")
                     }
                 }
             }
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
